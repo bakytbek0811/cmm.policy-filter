@@ -22,7 +22,7 @@ namespace CMM.PolicyFilter.Services
         {
             var url = "https://api.openai.com/v1/chat/completions";
             var gptModel = "gpt-4o";
-            var token = _configuration["GPT:ApiKey"];
+            var token = Environment.GetEnvironmentVariable("GPT_API_KEY");
 
             var request = new HttpRequestMessage(HttpMethod.Post, url);
             request.Headers.Add("Authorization", $"Bearer {token}");
