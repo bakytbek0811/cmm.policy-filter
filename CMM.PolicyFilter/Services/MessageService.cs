@@ -21,26 +21,33 @@ namespace CMM.PolicyFilter.Services
 
         public async void CheckMessageForPolicy(Message message)
         {
-            using var scope = _serviceProvider.CreateScope();
-            var _context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            var _policyFilterService = scope.ServiceProvider.GetRequiredService<IPolicyFilterService>();
-
-            var oldMessage = _context.Messages.FirstOrDefault(a => a.Id == message.Id);
-            if (oldMessage == null)
+            try
             {
-                throw new Exception($"Message with ID {message.Id} not found");
+                using var scope = _serviceProvider.CreateScope();
+                var _context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                var _policyFilterService = scope.ServiceProvider.GetRequiredService<IPolicyFilterService>();
+
+                var oldMessage = _context.Messages.FirstOrDefault(a => a.Id == message.Id);
+                if (oldMessage == null)
+                {
+                    throw new Exception($"Message with ID {message.Id} not found");
+                }
+
+                var filteredMessage = await _policyFilterService.Filter(message.Content);
+
+                if (filteredMessage == oldMessage.Content)
+                {
+                    return;
+                }
+
+                oldMessage.Content = filteredMessage;
+                _context.Entry(oldMessage).Property(m => m.Content).IsModified = true;
+                await _context.SaveChangesAsync();
             }
-
-            var filteredMessage = await _policyFilterService.Filter(message.Content);
-
-            if (filteredMessage == oldMessage.Content)
+            catch (Exception e)
             {
-                return;
+                Console.WriteLine(e);
             }
-            
-            oldMessage.Content = filteredMessage;
-            _context.Entry(oldMessage).Property(m => m.Content).IsModified = true;
-            await _context.SaveChangesAsync();
         }
 
         public Message DeserializeMessage(string messageString)
