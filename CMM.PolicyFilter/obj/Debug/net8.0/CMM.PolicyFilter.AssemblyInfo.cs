@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CMM.PolicyFilter")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d2fe9d40b4291ff8492639025b681ff325629027")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f13e7236815468930bcc6b431e0f91206e5a9706")]
 [assembly: System.Reflection.AssemblyProductAttribute("CMM.PolicyFilter")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CMM.PolicyFilter")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

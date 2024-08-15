@@ -41,6 +41,7 @@ namespace CMM.PolicyFilter.Services
 
                     var body = ea.Body.ToArray();
                     var messageString = Encoding.UTF8.GetString(body);
+                    Console.WriteLine(messageString);
 
                     var message = messageService.DeserializeMessage(messageString);
 
