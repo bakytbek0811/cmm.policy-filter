@@ -44,6 +44,8 @@ namespace CMM.PolicyFilter.Services
 
                     var message = messageService.DeserializeMessage(messageString);
 
+                    Console.WriteLine($"New message | {message.Id} | {DateTime.Now}");
+                    
                     messageService.CheckMessageForPolicy(message);
                 }
                 catch (Exception ex)
