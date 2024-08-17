@@ -9,20 +9,28 @@ public class Program
     {
         var host = CreateHostBuilder(args).Build();
 
-        var messageQueueService = host.Services.GetRequiredService<IMessageQueueService>();
-        messageQueueService.StartListening();
+        var queueService = host.Services.GetRequiredService<IMessageQueueService>();
+        queueService.StartListening();
 
         await host.RunAsync();
     }
 
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureServices((hostContext, services) =>
-            {
-                var configuration = hostContext.Configuration;
-
-                services.AddDatabase(configuration);
-                services.AddApplicationServices();
-                services.AddRabbitMq(configuration);
-            });
+    private static IHostBuilder CreateHostBuilder(string[] args)
+    {
+        return Host.CreateDefaultBuilder(args)
+                .ConfigureLogging(logging =>
+                {
+                    // logging.ClearProviders();
+                    // logging.AddConsole();
+                    // logging.SetMinimumLevel(LogLevel.Debug);
+                }).ConfigureServices((context, services) =>
+                {
+                    services.AddDatabase(context.Configuration);
+                    services.AddRabbitMq(context.Configuration);
+                    services.AddApplicationServices();
+                })
+            // .UseServiceProviderFactory(new NinjectServiceProviderFactory())
+            // .ConfigureContainer<IKernel>((context, kernel) => { kernel.Load(new DataModule(context.Configuration)); })
+            ;
+    }
 }

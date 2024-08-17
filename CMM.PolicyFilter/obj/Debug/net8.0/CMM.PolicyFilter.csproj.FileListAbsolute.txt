@@ -55,3 +55,4 @@
 /Users/bakytbek/Documents/Projects/C#/CMM.PolicyFilter/CMM.PolicyFilter/obj/Debug/net8.0/CMM.PolicyFilter.genruntimeconfig.cache
 /Users/bakytbek/Documents/Projects/C#/CMM.PolicyFilter/CMM.PolicyFilter/obj/Debug/net8.0/ref/CMM.PolicyFilter.dll
 /Users/bakytbek/Documents/Projects/C#/CMM.PolicyFilter/CMM.PolicyFilter/obj/Debug/net8.0/CMM.PolicyFilter.sourcelink.json
+/Users/bakytbek/Documents/Projects/C#/CMM.PolicyFilter/CMM.PolicyFilter/bin/Debug/net8.0/Ninject.dll

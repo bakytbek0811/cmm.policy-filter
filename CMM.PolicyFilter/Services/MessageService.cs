@@ -6,7 +6,7 @@ namespace CMM.PolicyFilter.Services
 {
     public interface IMessageService
     {
-        void CheckMessageForPolicy(Message message);
+        Task CheckMessageForPolicy(Message message);
         Message DeserializeMessage(string messageString);
     }
 
@@ -19,35 +19,28 @@ namespace CMM.PolicyFilter.Services
             _serviceProvider = serviceProvider;
         }
 
-        public async void CheckMessageForPolicy(Message message)
+        public async Task CheckMessageForPolicy(Message message)
         {
-            try
+            using var scope = _serviceProvider.CreateScope();
+            var _context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var _policyFilterService = scope.ServiceProvider.GetRequiredService<IPolicyFilterService>();
+
+            var oldMessage = _context.Messages.FirstOrDefault(a => a.Id == message.Id);
+            if (oldMessage == null)
             {
-                using var scope = _serviceProvider.CreateScope();
-                var _context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                var _policyFilterService = scope.ServiceProvider.GetRequiredService<IPolicyFilterService>();
-
-                var oldMessage = _context.Messages.FirstOrDefault(a => a.Id == message.Id);
-                if (oldMessage == null)
-                {
-                    throw new Exception($"Message with ID {message.Id} not found");
-                }
-
-                var filteredMessage = await _policyFilterService.Filter(message.Content);
-
-                if (filteredMessage == oldMessage.Content)
-                {
-                    return;
-                }
-
-                oldMessage.Content = filteredMessage;
-                _context.Entry(oldMessage).Property(m => m.Content).IsModified = true;
-                await _context.SaveChangesAsync();
+                throw new Exception($"Message with ID {message.Id} not found");
             }
-            catch (Exception e)
+
+            var filteredMessage = await _policyFilterService.Filter(message.Content);
+
+            if (filteredMessage == oldMessage.Content)
             {
-                Console.WriteLine(e);
+                return;
             }
+
+            oldMessage.Content = filteredMessage;
+            _context.Entry(oldMessage).Property(m => m.Content).IsModified = true;
+            await _context.SaveChangesAsync();
         }
 
         public Message DeserializeMessage(string messageString)

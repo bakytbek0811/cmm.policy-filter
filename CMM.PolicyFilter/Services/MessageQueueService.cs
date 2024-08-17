@@ -32,7 +32,7 @@ namespace CMM.PolicyFilter.Services
         public void StartListening()
         {
             var consumer = new EventingBasicConsumer(_channel);
-            consumer.Received += (_, ea) =>
+            consumer.Received += async (_, ea) =>
             {
                 try
                 {
@@ -46,16 +46,20 @@ namespace CMM.PolicyFilter.Services
                     var message = messageService.DeserializeMessage(messageString);
 
                     Console.WriteLine($"New message | {message.Id} | {DateTime.Now}");
-                    
-                    messageService.CheckMessageForPolicy(message);
+
+                    await messageService.CheckMessageForPolicy(message);
+
+                    _channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error in StartListening(): {ex.Message} | {DateTime.Now}");
+
+                    _channel.BasicNack(deliveryTag: ea.DeliveryTag, multiple: false, requeue: true);
                 }
             };
 
-            _channel.BasicConsume(queue: _queueName, autoAck: true, consumer: consumer);
+            _channel.BasicConsume(queue: _queueName, autoAck: false, consumer: consumer);
         }
     }
 }

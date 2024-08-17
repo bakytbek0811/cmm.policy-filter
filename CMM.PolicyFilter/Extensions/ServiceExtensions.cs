@@ -15,7 +15,7 @@ namespace CMM.PolicyFilter.Extensions
                 UserName = configuration["RabbitMq:UserName"],
                 Password = configuration["RabbitMq:Password"]
             };
-
+            
             services.AddSingleton(factory);
             services.AddSingleton<IConnection>(sp => sp.GetRequiredService<ConnectionFactory>().CreateConnection());
             services.AddSingleton<IModel>(sp => sp.GetRequiredService<IConnection>().CreateModel());
