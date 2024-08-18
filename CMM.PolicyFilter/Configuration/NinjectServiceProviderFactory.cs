@@ -1,6 +1,5 @@
 using Ninject;
 using Ninject.Activation;
-using Ninject.Syntax;
 
 namespace CMM.PolicyFilter.Configuration
 {
@@ -20,7 +19,7 @@ namespace CMM.PolicyFilter.Configuration
                 BindService(service);
             }
 
-            _kernel.Bind<IServiceProvider>().ToMethod(ctx => new NinjectServiceProvider(_kernel)).InSingletonScope();
+            _kernel.Bind<IServiceProvider>().ToMethod(_ => new NinjectServiceProvider(_kernel)).InSingletonScope();
 
             _kernel.Bind<IExternalScopeProvider>().To<LoggerExternalScopeProvider>().InSingletonScope();
 
@@ -62,39 +61,6 @@ namespace CMM.PolicyFilter.Configuration
                 ServiceLifetime.Transient => ctx => null,
                 _ => null,
             };
-        }
-    }
-
-    public class NinjectServiceScopeFactory : IServiceScopeFactory
-    {
-        private readonly IKernel _kernel;
-
-        public NinjectServiceScopeFactory(IKernel kernel)
-        {
-            _kernel = kernel;
-        }
-
-        public IServiceScope CreateScope()
-        {
-            return new NinjectServiceScope(_kernel.BeginBlock());
-        }
-    }
-
-    public class NinjectServiceScope : IServiceScope
-    {
-        private readonly IResolutionRoot _resolutionRoot;
-
-        public NinjectServiceScope(IResolutionRoot resolutionRoot)
-        {
-            _resolutionRoot = resolutionRoot;
-            ServiceProvider = new NinjectServiceProvider((IKernel)resolutionRoot);
-        }
-
-        public IServiceProvider ServiceProvider { get; }
-
-        public void Dispose()
-        {
-            (_resolutionRoot as IDisposable)?.Dispose();
         }
     }
 }
