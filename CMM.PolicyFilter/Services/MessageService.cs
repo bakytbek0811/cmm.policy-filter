@@ -12,18 +12,22 @@ namespace CMM.PolicyFilter.Services
 
     public class MessageService : IMessageService
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly AppDbContext _context;
+        private readonly IPolicyFilterService _policyFilterService;
 
-        public MessageService(IServiceProvider serviceProvider)
+        public MessageService(AppDbContext context,
+            IPolicyFilterService policyFilterService)
         {
-            _serviceProvider = serviceProvider;
+            // _serviceProvider = serviceProvider;
+            _context = context;
+            _policyFilterService = policyFilterService;
         }
 
         public async Task CheckMessageForPolicy(Message message)
         {
-            using var scope = _serviceProvider.CreateScope();
-            var _context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            var _policyFilterService = scope.ServiceProvider.GetRequiredService<IPolicyFilterService>();
+            // using var scope = _serviceProvider.CreateScope();
+            // var _context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            // var _policyFilterService = scope.ServiceProvider.GetRequiredService<IPolicyFilterService>();
 
             var oldMessage = _context.Messages.FirstOrDefault(a => a.Id == message.Id);
             if (oldMessage == null)

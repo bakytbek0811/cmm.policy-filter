@@ -11,13 +11,6 @@ namespace CMM.PolicyFilter.Services
 
     public class GptService : IGptService
     {
-        private readonly IConfiguration _configuration;
-
-        public GptService(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-
         public async Task<GptResponse> GenerateText(GptMessage[] messages)
         {
             var url = "https://api.openai.com/v1/chat/completions";
@@ -46,7 +39,7 @@ namespace CMM.PolicyFilter.Services
             {
                 throw new Exception("Something went wrong.");
             }
-            
+
             return data;
         }
     }

@@ -13,12 +13,12 @@ namespace CMM.PolicyFilter.Services
     {
         private readonly IModel _channel;
         private readonly string _queueName = "chat-message-policy-filter-queue";
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IMessageService _messageService;
 
-        public MessageQueueService(IModel channel, IServiceProvider serviceProvider)
+        public MessageQueueService(IModel channel, IMessageService messageService)
         {
             _channel = channel;
-            _serviceProvider = serviceProvider;
+            _messageService = messageService;
 
             _channel.QueueDeclare(
                 queue: _queueName,
@@ -36,18 +36,15 @@ namespace CMM.PolicyFilter.Services
             {
                 try
                 {
-                    using var scope = _serviceProvider.CreateScope();
-                    var messageService = scope.ServiceProvider.GetRequiredService<IMessageService>();
-
                     var body = ea.Body.ToArray();
                     var messageString = Encoding.UTF8.GetString(body);
                     Console.WriteLine(messageString);
 
-                    var message = messageService.DeserializeMessage(messageString);
+                    var message = _messageService.DeserializeMessage(messageString);
 
                     Console.WriteLine($"New message | {message.Id} | {DateTime.Now}");
 
-                    await messageService.CheckMessageForPolicy(message);
+                    await _messageService.CheckMessageForPolicy(message);
 
                     _channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
                 }
