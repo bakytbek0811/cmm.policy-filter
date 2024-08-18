@@ -2,16 +2,15 @@ using CMM.PolicyFilter.Data;
 using CMM.PolicyFilter.Services;
 using Microsoft.EntityFrameworkCore;
 using Ninject;
-using Ninject.Modules;
 using RabbitMQ.Client;
 
 namespace CMM.PolicyFilter.Configuration;
 
-public class DataModule : NinjectModule
+public class NinjectModule : Ninject.Modules.NinjectModule
 {
     private readonly IConfiguration _configuration;
 
-    public DataModule(IConfiguration configuration)
+    public NinjectModule(IConfiguration configuration)
     {
         this._configuration = configuration;
     }
@@ -37,9 +36,9 @@ public class DataModule : NinjectModule
             .InSingletonScope();
         this.Bind<IModel>().ToMethod(_ => this.Kernel.Get<IConnection>().CreateModel()).InSingletonScope();
         
+        this.Bind<IMessageQueueService>().To<MessageQueueService>().InSingletonScope();
         this.Bind<IGptService>().To<GptService>().InSingletonScope();
         this.Bind<IPolicyFilterService>().To<PolicyFilterService>().InSingletonScope();
         this.Bind<IMessageService>().To<MessageService>().InSingletonScope();
-        this.Bind<IMessageQueueService>().To<MessageQueueService>().InSingletonScope();
     }
 }
